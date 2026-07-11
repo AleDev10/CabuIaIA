@@ -1,0 +1,13 @@
+{
+  "name": "cabulaia",
+  "version": "1.0.0",
+  "description": "uma extenção para o navegardor chrome que usa os recursos de uma IA para interpretar o contexto de uma pagina web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
