@@ -31,17 +31,16 @@
 }
 
 #main img{
-    width: 60%;
-    height: 50%;
+    width: 100%;
+    height: 100%;
+    margin: -2rem 0rem;
 }
-
 #caixa-btn{
     display: flex;
     gap: 1rem;
     width: 100%;
     justify-content: center;
 }
-
 .btn{
     background-color: #7617d8;
     border: none;
@@ -50,6 +49,7 @@
     border-radius: .5rem;
     color: #262626;
     font-size: 1.2rem;
+    font-family: "montserrat-bold";
 }
 .btn:hover{
     background-color: #ffffff;
@@ -72,15 +72,13 @@
 
 @media (max-width:530px){
     #main img{
-    width: 40%;
-    height: 30%;
-}
-.btn{
-    font-size: .8rem;
+    width: 80%;
+    height: 40%;
 }
 }
+
 @media (max-width:530px){
 .btn{
-    font-size: .6rem;
+    font-size: .7rem;
 }
 }
