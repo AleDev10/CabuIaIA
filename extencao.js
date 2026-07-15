@@ -4,18 +4,16 @@ const btnCancelar = document.getElementById("btn-cancelar");
 
 btnIniciar.addEventListener("click", () => {
   chrome.runtime.sendMessage(
-    { origem: "frontend", info: "iniciar" },
-    (response) => {
-      console.log("Background respondeu:", response.info);
-    },
+    { origem: "frontend", info: "iniciar" }
   );
 });
 
 btnCancelar.addEventListener("click", () => {
   chrome.runtime.sendMessage(
-    { origem: "frontend", info: "Cancelar" },
-    (response) => {
-      console.log("Background respondeu:", response.info);
-    },
+    { origem: "frontend", info: "Cancelar" }
   );
 });
+
+chrome.runtime.onMessage.addListener((menssagem, sender, sendResponse) => {
+    caixaRespostas.innerText = menssagem.info;
+  });

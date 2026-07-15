@@ -4,12 +4,16 @@
     "version":"1.0",
     "description": "uma extenção para o navegardor chrome que usa os recursos de uma IA para interpretar o contexto de uma pagina web",
     "action":{
-        "default_title":"CabulaIA",
-        "default_icon":"assets/icone.png"
+        "default_title":"CabulaIA"
     },
+    "icons": {
+    "16": "assets/icone16.png",
+    "32": "assets/icone32.png",
+    "48": "assets/icone48.png",
+    "128": "assets/icone128.png"
+  },
     "side_panel":{
-        "default_path":"extencao.html",
-        "default_icon":"assets/icone.png"
+        "default_path":"extencao.html"
     },
     "permissions":[
         "activeTab",
