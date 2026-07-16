@@ -1,17 +1,42 @@
-chrome.action.onClicked.addListener(async (tab) => {
-  try {
-    abrirPainel(tab);
-  } catch (error) {
-    console.log("Erro [eventoClick]");
-  }
+let estadoPAinel = false;
+
+chrome.action.onClicked.addListener((tab) => {
+  verificarEstadoPainel(tab);
+});
+
+chrome.sidePanel.onClosed.addListener(() => {
+  estadoPAinel = false;
 });
 
 async function abrirPainel(tab) {
-  console.log("clicou no icone da extenção:", tab.id);
-  await chrome.sidePanel.open({ tabId: tab.id });
+  try {
+    console.log("Abriu a extenção no separador nº:", tab.id);
+    await chrome.sidePanel.open({ tabId: tab.id });
+  } catch (error) {
+    console.log("Erro [abrirPainel()]");
+  }
 }
 
-function enviarMenssagem(mensagem) {
+async function fecharPainel(tab) {
+  try {
+    console.log("Fechou a extenção na janela nº:", tab.windowId);
+    await chrome.sidePanel.close({ windowId: tab.windowId });
+  } catch (error) {
+    console.log("Erro [fecharPainel()]", error);
+  }
+}
+
+function verificarEstadoPainel(tab) {
+  if (!estadoPAinel) {
+    abrirPainel(tab);
+    estadoPAinel = true;
+  } else {
+    fecharPainel(tab);
+    estadoPAinel = false;
+  }
+}
+
+function enviarFront(mensagem) {
   chrome.runtime.sendMessage({ origem: "back", info: mensagem });
 }
 
@@ -22,10 +47,10 @@ async function enviarContent(tab) {
         origem: "content",
         info: "Extrair texto",
       });
-      enviarMenssagem(resposta.info);
+      enviarFront(resposta.info);
     }
   } catch (error) {
-    console.log("Erro [enviarContent()]");
+    console.log("Erro [enviarContent()]",error);
   }
 }
 
@@ -45,8 +70,6 @@ function origemFrontend(menssagem) {
   if (menssagem.info === "iniciar") {
     console.log(menssagem.info);
     identificarTab();
-  } else if (menssagem.info === "Cancelar") {
-    console.log(menssagem.info);
   }
 }
 
