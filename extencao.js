@@ -1,12 +1,18 @@
 const caixaRespostas = document.getElementById("resultado");
-const btnIniciar = document.getElementById("btn-iniciar");
+const btnAnalisarPagina = document.getElementById("btn-iniciar");
+const contCaracter = document.getElementById("contCaracter");
 
-btnIniciar.addEventListener("click", () => {
-  chrome.runtime.sendMessage(
-    { origem: "frontend", info: "iniciar" }
-  );
+function limparInfo() {
+  caixaRespostas.innerText = "";
+  contCaracter.innerText = `Nº caracteres enviados:0`;
+}
+
+btnAnalisarPagina.addEventListener("click", () => {
+  limparInfo();
+  chrome.runtime.sendMessage({ caminho: "pagina"});
 });
 
 chrome.runtime.onMessage.addListener((menssagem, sender, sendResponse) => {
-    caixaRespostas.innerText = menssagem.info;
-  });
+  caixaRespostas.innerText = menssagem.info;
+  contCaracter.innerText = `Nº caracteres enviados:${menssagem.contador}`;
+});

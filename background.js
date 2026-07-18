@@ -1,4 +1,5 @@
 let estadoPAinel = false;
+let contCaracter = 0;
 
 chrome.action.onClicked.addListener((tab) => {
   verificarEstadoPainel(tab);
@@ -37,17 +38,26 @@ function verificarEstadoPainel(tab) {
 }
 
 function enviarFront(mensagem) {
-  chrome.runtime.sendMessage({ origem: "back", info: mensagem });
+  chrome.runtime.sendMessage({ origem: "back", info: mensagem, contador: contCaracter });
+}
+
+function verificarTextosRecibidos(mensagem) {
+  if (mensagem==="") {
+    console.log("Analise da pagina cancelado[String null]");
+  }else{
+    contCaracter = mensagem.length;
+    enviarFront(mensagem);
+  }
 }
 
 async function enviarContent(tab) {
   try {
     if (tab.id) {
       const resposta = await chrome.tabs.sendMessage(tab.id, {
-        origem: "content",
+        origem: "background",
         info: "Extrair texto",
       });
-      enviarFront(resposta.info);
+      verificarTextosRecibidos(resposta.info)
     }
   } catch (error) {
     console.log("Erro [enviarContent()]",error);
@@ -66,28 +76,26 @@ async function identificarTab() {
   }
 }
 
-function origemFrontend(menssagem) {
-  if (menssagem.info === "iniciar") {
-    console.log(menssagem.info);
-    identificarTab();
-  }
+function caminhoPagina(menssagem) {
+  console.log("Iniciar analise da pagina");
+  identificarTab();
 }
 
-function escolherOrigem(menssagem) {
-  switch (menssagem.origem) {
-    case "frontend":
-      origemFrontend(menssagem);
+function escolherCaminho(menssagem) {
+  switch (menssagem.caminho) {
+    case "pagina":
+      caminhoPagina(menssagem);
       break;
 
     default:
-      console.log("Erro [escolherOrigem()]");
+      console.log("Erro [escolherCaminho()]");
       break;
   }
 }
 
 function ReceberMensagens() {
   chrome.runtime.onMessage.addListener((menssagem, sender, sendResponse) => {
-    escolherOrigem(menssagem);
+    escolherCaminho(menssagem);
   });
 }
 

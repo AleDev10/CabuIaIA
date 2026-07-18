@@ -43,8 +43,10 @@
 }
 #caixa-btn {
   display: flex;
+  flex-direction: column;
   gap: 1rem;
   width: 100%;
+  align-items: center;
   justify-content: center;
 }
 .btn {
@@ -75,10 +77,13 @@
   text-align: left;
   padding: 1rem;
   overflow-x: hidden;
-
 }
 #resultado::-webkit-scrollbar {
   display: none;
+}
+#contCaracter {
+  color: #ffffff;
+  font-family: "montserrat-regular";
 }
 
 @media (max-width: 530px) {
@@ -88,12 +93,18 @@
   .btn {
     font-size: 0.8rem;
   }
+  #contCaracter {
+    font-size: 0.8rem;
+  }
 }
 @media (max-width: 350px) {
   .caixa-titulo p {
     font-size: 2rem;
   }
   .btn {
+    font-size: 0.6rem;
+  }
+  #contCaracter {
     font-size: 0.6rem;
   }
 }
