@@ -5,8 +5,9 @@ chrome.action.onClicked.addListener((tab) => {
   verificarEstadoPainel(tab);
 });
 
-chrome.sidePanel.onClosed.addListener(() => {
+chrome.sidePanel.onClosed.addListener((info) => {
   estadoPAinel = false;
+  console.log("Fechou a extenção na janela nº:", info.windowId);
 });
 
 async function abrirPainel(tab) {
@@ -38,53 +39,74 @@ function verificarEstadoPainel(tab) {
 }
 
 function enviarFront(mensagem) {
-  chrome.runtime.sendMessage({ origem: "back", info: mensagem, contador: contCaracter });
+  chrome.runtime.sendMessage({
+    origem: "back",
+    info: mensagem,
+    contador: contCaracter,
+  });
 }
 
 function verificarTextosRecibidos(mensagem) {
-  if (mensagem==="") {
-    console.log("Analise da pagina cancelado[String null]");
-  }else{
-    contCaracter = mensagem.length;
-    enviarFront(mensagem);
+  if (mensagem.info === "") {
+    if (mensagem.caminho ==="pagina") {
+      console.log("Analise da pagina cancelada[String null]");
+    } else if (mensagem.caminho ==="seleção") {
+      console.log("Analise da seleção cancelada[String null]");
+    }
+  } else {
+    contCaracter = mensagem.info.length;
+    enviarFront(mensagem.info);
   }
 }
 
-async function enviarContent(tab) {
+async function enviarContent(tab, menssagem) {
   try {
     if (tab.id) {
-      const resposta = await chrome.tabs.sendMessage(tab.id, {
-        origem: "background",
-        info: "Extrair texto",
-      });
-      verificarTextosRecibidos(resposta.info)
+      const resposta = await chrome.tabs.sendMessage(tab.id, menssagem);
+      verificarTextosRecibidos({ info: resposta.info, caminho: resposta.caminho });
     }
   } catch (error) {
-    console.log("Erro [enviarContent()]",error);
+    console.log("Erro [enviarContent()]", error);
   }
 }
 
-async function identificarTab() {
+async function identificarTab(menssagem) {
   try {
     const [tab] = await chrome.tabs.query({
       active: true,
       currentWindow: true,
     });
-    enviarContent(tab);
+    enviarContent(tab, menssagem);
   } catch (error) {
     console.log("Erro [identificarTab()]");
   }
 }
 
-function caminhoPagina(menssagem) {
+function caminhoPagina() {
   console.log("Iniciar analise da pagina");
-  identificarTab();
+  identificarTab({
+    origem: "background",
+    info: "Extrair texto da pagina",
+    caminho: "pagina"
+  });
+}
+
+function caminhoSelecao() {
+  console.log("Iniciar analise da seleção");
+  identificarTab({
+    origem: "background",
+    info: "Extrair texto selecionado",
+    caminho: "seleção"
+  });
 }
 
 function escolherCaminho(menssagem) {
   switch (menssagem.caminho) {
     case "pagina":
-      caminhoPagina(menssagem);
+      caminhoPagina();
+      break;
+    case "seleção":
+      caminhoSelecao();
       break;
 
     default:

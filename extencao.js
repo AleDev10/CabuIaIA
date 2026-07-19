@@ -1,5 +1,6 @@
 const caixaRespostas = document.getElementById("resultado");
 const btnAnalisarPagina = document.getElementById("btn-iniciar");
+const btnAnalisarSelecao = document.getElementById("btn-selecao");
 const contCaracter = document.getElementById("contCaracter");
 
 function limparInfo() {
@@ -9,7 +10,12 @@ function limparInfo() {
 
 btnAnalisarPagina.addEventListener("click", () => {
   limparInfo();
-  chrome.runtime.sendMessage({ caminho: "pagina"});
+  chrome.runtime.sendMessage({ caminho: "pagina" });
+});
+
+btnAnalisarSelecao.addEventListener("click", () => {
+  limparInfo();
+  chrome.runtime.sendMessage({ caminho: "seleção" });
 });
 
 chrome.runtime.onMessage.addListener((menssagem, sender, sendResponse) => {
