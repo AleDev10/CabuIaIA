@@ -46,16 +46,51 @@ function enviarFront(mensagem) {
   });
 }
 
+function resultadoIA(mensagem, textoIA) {
+  let resposta = textoIA.choices[0].message.content;
+  enviarFront(resposta);
+  console.log("Resposta da IA:", resposta);
+  console.log("Parametro enviado:", mensagem);
+}
+
+async function analisarPelaIA(mensagem) {
+  try {
+    let resposta = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization:
+            "Bearer -----",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "inclusionai/ling-3.0-flash:free",
+          messages: [
+            {
+              role: "user",
+              content: mensagem,
+            },
+          ],
+        }),
+      },
+    );
+    resultadoIA(mensagem, await resposta.json());
+  } catch (error) {
+    console.log("Erro [analisarPelaIA()]", error);
+  }
+}
+
 function verificarTextosRecibidos(mensagem) {
   if (mensagem.info === "") {
-    if (mensagem.caminho ==="pagina") {
+    if (mensagem.caminho === "pagina") {
       console.log("Analise da pagina cancelada[String null]");
-    } else if (mensagem.caminho ==="seleção") {
+    } else if (mensagem.caminho === "seleção") {
       console.log("Analise da seleção cancelada[String null]");
     }
   } else {
     contCaracter = mensagem.info.length;
-    enviarFront(mensagem.info);
+    analisarPelaIA(mensagem.info);
   }
 }
 
@@ -63,7 +98,10 @@ async function enviarContent(tab, menssagem) {
   try {
     if (tab.id) {
       const resposta = await chrome.tabs.sendMessage(tab.id, menssagem);
-      verificarTextosRecibidos({ info: resposta.info, caminho: resposta.caminho });
+      verificarTextosRecibidos({
+        info: resposta.info,
+        caminho: resposta.caminho,
+      });
     }
   } catch (error) {
     console.log("Erro [enviarContent()]", error);
@@ -87,7 +125,7 @@ function caminhoPagina() {
   identificarTab({
     origem: "background",
     info: "Extrair texto da pagina",
-    caminho: "pagina"
+    caminho: "pagina",
   });
 }
 
@@ -96,7 +134,7 @@ function caminhoSelecao() {
   identificarTab({
     origem: "background",
     info: "Extrair texto selecionado",
-    caminho: "seleção"
+    caminho: "seleção",
   });
 }
 
